@@ -11,7 +11,7 @@ L'agent est plongé au sein d'un *environnement*, et prend ses décisions en fon
 Le but de ce projet est de faire atterrir une fusée sur la lune en contrôlant ses moteurs.
 
 <p align="center">
-    <img  src="./ressources/landing.gif"  alt="lunar_environnement" width="300">
+    <img  src="./ressources/landing.gif"  alt="lunar_environnement" width="500">
 </p>
 
 L'environnement est donné par [gym](https://gym.openai.com/) avec [LunarLander-v2](https://gym.openai.com/envs/LunarLander-v2/) et intègre déjà le système de récompense (rewards) de nos actions.
@@ -91,6 +91,11 @@ Ici on utilise un réseau à 3 couches :
     self.DQN_online.compile(loss='mse',		   		 optimizer=tf.keras.optimizers.Adam(self.learning_rate))
 ```
 
+<p align="center">
+    <img src="./ressources/model.png" alt="Bellman_optimality_equation" width=500 />
+</p>
+
+
 Les 3 couches sont fully-connected : les neurones de deux couches successives sont tous interconnectés entre eux. 
 
 Les deux première utilisent la fonction d'activation *relu* qui ajoute la **non-linéarité** nécessaire du réseau de neurones (NN).
@@ -131,7 +136,7 @@ max_pred_q_values = np.amax(pred_q_values, axis=1)
 
 2. La nouvelle target est calculée à partir de l'équation d'optimalité de Bellman  :
 <p align="center">
-    <img src="./ressources/bellman.png" alt="Bellman_optimality_equation" width=300 />
+    <img src="./ressources/bellman_equation.png" alt="Bellman_optimality_equation" width=300 />
 </p>
 
    On obtient par la suite
@@ -150,7 +155,7 @@ target_vec = self.DQN_online(states_vec)
 En entraînant 1 step sur 5 avec 1000 steps par épisodes, j'ai obtenu le résultat suivant :
 
 <p align="center">
-    <img align="center" src="./ressources/graph_simple.png" width=300 />
+    <img align="center" src="./ressources/graph_simple.png" width=500 />
 </p>
 
 On peut remarquer :
@@ -178,14 +183,14 @@ Ils ont chacun leur rôle :
 ### Resultats
 
 <p align="center">
-    <img align="center" src="./ressources/graph_double.png" width=300 />
+    <img align="center" src="./ressources/graph_double.png" width=500 />
 </p>
 
 Comparaison Simple/Double DQN
 
 
 <p align="center">
-    <img align="center" src="./ressources/simple_double_DQN_comparison.svg" width=400 />
+    <img align="center" src="./ressources/simple_double_DQN_comparison.svg" width=700 />
 </p>
 
 
@@ -195,3 +200,4 @@ Le repo GitHub de Mathieu Goutay traitant du RL https://github.com/mgoutay/ml_co
 
 Un article de towards science traitant du DQN avec gym https://towardsdatascience.com/welcome-to-deep-reinforcement-learning-part-1-dqn-c3cab4d41b6b
 
+Quelques pistes d'améliorations pour les approches DQN https://medium.com/@parsa_h_m/deep-reinforcement-learning-dqn-double-dqn-dueling-dqn-noisy-dqn-and-dqn-with-prioritized-551f621a9823
