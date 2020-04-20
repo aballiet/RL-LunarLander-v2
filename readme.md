@@ -10,7 +10,7 @@ L'agent est plongé au sein d'un *environnement*, et prend ses décisions en fon
 
 Le but de ce projet est de faire atterrir une fusée sur la lune en contrôlant ses moteurs.
 
-<p style = text-align:center;>
+<p align="center">
     <img  src="./ressources/landing.gif"  alt="lunar_environnement" width="300">
 </p>
 
@@ -97,6 +97,13 @@ Les deux première utilisent la fonction d'activation *relu* qui ajoute la **non
 
 On utilise l'optimizer *Adam* qui permet d'ajuster le learning rate ainsi d'obtenir un meilleur entraînement que la descente de gradient stochastique classique. Il rend ainsi l'apprentissage plus efficace dans le cas d'un réseau entraîne de manière *online* : on entraine par étape sur des petits batch (64 échantillons dans notre cas).
 
+### Experience Replay
+
+On entraîne le NN sur des batch constitués d'échantillons tirés aléatoirement dans notre historique :  c'est l'*expérience replay*.
+Cela permet d'apprendre sur des échantillons les plus indépendants possibles les uns des autres afin d'obtenir de meilleur résultats de prédiction.
+
+En effet, pour que l'apprentissage soit le plus efficace possible il est favorable d'avoir des variables indépendantes et identiquement distribuées (i.i.d).
+
 ### Epsilon-greedy policy
 
 Cette politique permet de garantir, en début d'apprentissage, une bonne capacité d'**exploration** en ayant une **forte probabilité** de choisir notre action au **hasard**  puis de diminuer cette probabilité jusqu'à une valeur minimum.
@@ -123,15 +130,14 @@ max_pred_q_values = np.amax(pred_q_values, axis=1)
 ```
 
 2. La nouvelle target est calculée à partir de l'équation d'optimalité de Bellman  :
-
-<p style = text-align:center;>
-   <img src="./ressources/bellman.png" alt="Bellman_optimality_equation" width=300 />
+<p align="center">
+    <img src="./ressources/bellman.png" alt="Bellman_optimality_equation" width=300 />
 </p>
 
    On obtient par la suite
 
-<p style = text-align:center;>
-   <img src="./ressources/formula.png" alt="formula" width=300 />
+<p align="center">
+    <img align="center" src="./ressources/formula.png" alt="formula" width=300 />
 </p>
 
 ```python
@@ -139,13 +145,13 @@ targets = rewards + self.gamma * (max_pred_q_values) * (1 - end_boolean)
 target_vec = self.DQN_online(states_vec)
 ```
 
-
-
 ## Résultats
 
 En entraînant 1 step sur 5 avec 1000 steps par épisodes, j'ai obtenu le résultat suivant :
 
-<img src="./ressources/graph.PNG" style="zoom:50%;" />
+<p align="center">
+    <img align="center" src="./ressources/graph_simple.png" width=300 />
+</p>
 
 On peut remarquer :
 
@@ -159,7 +165,31 @@ Beaucoup de pistes restent à explorer afin d'obtenir de meilleurs résultats
 - Essayer de nouvelles structures pour notre modèle
 - utiliser un réseau de neurone offline pour servir de target et mettre à jour ses poids à partir de ceux du réseau online à intervalle régulier (tentative vaine, le réseau online ne convergeait pas...)
 
-## Sources
+## Double DQN
+
+Afin de stabiliser l'aprentissage, on peut utilsier une deuxième NN identique au premier.
+
+Ils ont chacun leur rôle :
+
+- online NN : apprend grâce à l'experience replay comme dans le DQN simple
+
+- offline NN : est une copie de **online NN** mise à jour moins régulièrement. A la fin de chaque épisode (par exemple), on copie les poids du réseau en ligne dans celui hors ligne.
+
+### Resultats
+
+<p align="center">
+    <img align="center" src="./ressources/graph_double.png" width=300 />
+</p>
+
+Comparaison Simple/Double DQN
+
+
+<p align="center">
+    <img align="center" src="./ressources/simple_double_DQN_comparison.svg" width=400 />
+</p>
+
+
+# Sources
 
 Le repo GitHub de Mathieu Goutay traitant du RL https://github.com/mgoutay/ml_course
 
