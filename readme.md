@@ -1,5 +1,7 @@
 # Mini Projet 4 IAT : Deep Reinforcement Learning
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/aballiet/RL-LunarLander-v2/)
+
 Pendant les cours d'IAT (Intelligence Artificielle pour les Télécoms), nous avons abordé les approches d'apprentissage par renforcement à travers les cours de Jilles DIBANGOYE et les travaux dirigés de Mathieu GOUTAY. 
 
 Ces approches, notamment avec le **Q-Learning** permettent d'apprendre les actions à prendre, à partir d'expériences, de façon à optimiser une récompense quantitative au cours du temps. 
@@ -13,6 +15,8 @@ Le but de ce projet est de faire atterrir une fusée sur la lune en contrôlant 
 <p align="center">
     <img  src="./ressources/landing.gif"  alt="lunar_environnement" width="500">
 </p>
+
+> Résultat obtenu après 391 épisodes d'apprentissage avec un double DQN
 
 L'environnement est donné par [gym](https://gym.openai.com/) avec [LunarLander-v2](https://gym.openai.com/envs/LunarLander-v2/) et intègre déjà le système de récompense (rewards) de nos actions.
 
@@ -43,7 +47,7 @@ for episode in range(nb_episodes):
     state = env.sense()	# retrieve initial state
     
     for step in range(nb_steps):
-        
+
         # predict best action according to state 
         action = predict(state)
         
@@ -81,20 +85,19 @@ Ici on utilise un réseau à 3 couches :
 ```python
 #Create and initialize the online DQN
 	self.DQN_online = tf.keras.models.Sequential([
-		Dense(512, activation='relu'),
+	    Dense(512, activation='relu'),
         Dense(256, activation='relu'),
         Dense(self.nb_actions, activation='linear')
     ])
     
     #Build the model to create the weights
     self.DQN_online.build(input_shape=(None, self.state_size)) 
-    self.DQN_online.compile(loss='mse',		   		 optimizer=tf.keras.optimizers.Adam(self.learning_rate))
+    self.DQN_online.compile(loss='mse', optimizer=tf.keras.optimizers.Adam(self.learning_rate))
 ```
 
 <p align="center">
     <img src="./ressources/model.png" alt="Bellman_optimality_equation" width=500 />
 </p>
-
 
 Les 3 couches sont fully-connected : les neurones de deux couches successives sont tous interconnectés entre eux. 
 
@@ -123,7 +126,9 @@ actions = self.DQN_online(state)
 return np.argmax(actions)
 ```
 
-### Target
+### Simple DQN
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/aballiet/RL-LunarLander-v2/blob/master/RL_Simple_DQN_LunarLander_v2.ipynb)
 
 Afin d'entrainer notre NN, on procède comme suit
 
@@ -136,10 +141,10 @@ max_pred_q_values = np.amax(pred_q_values, axis=1)
 
 2. La nouvelle target est calculée à partir de l'équation d'optimalité de Bellman  :
 <p align="center">
-    <img src="./ressources/bellman_equation.png" alt="Bellman_optimality_equation" width=300 />
+    <img src="./ressources/bellman_equation.png" alt="Bellman_optimality_equation" width=400 />
 </p>
 
-   On obtient par la suite
+On obtient par la suite :
 
 <p align="center">
     <img align="center" src="./ressources/formula.png" alt="formula" width=300 />
@@ -149,6 +154,8 @@ max_pred_q_values = np.amax(pred_q_values, axis=1)
 targets = rewards + self.gamma * (max_pred_q_values) * (1 - end_boolean)
 target_vec = self.DQN_online(states_vec)
 ```
+
+>L'entraînement est automatiquement arrêté lorsqu' on obtient 10 épisodes consécutifs avec un reward supérieur à **180**.
 
 ## Résultats
 
@@ -172,6 +179,8 @@ Beaucoup de pistes restent à explorer afin d'obtenir de meilleurs résultats
 
 ## Double DQN
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/aballiet/RL-LunarLander-v2/blob/master/RL_Double_DQN_LunarLander_v2.ipynb)
+
 Afin de stabiliser l'aprentissage, on peut utilsier une deuxième NN identique au premier.
 
 Ils ont chacun leur rôle :
@@ -186,12 +195,19 @@ Ils ont chacun leur rôle :
     <img align="center" src="./ressources/graph_double.png" width=500 />
 </p>
 
+Au bout d'un peu moins de 391, l'entraînement est terminé. C'est mieux que le Simple DQN avec les 482 épisodes nécessaires.
+
+
 Comparaison Simple/Double DQN
 
 
 <p align="center">
     <img align="center" src="./ressources/simple_double_DQN_comparison.svg" width=700 />
 </p>
+
+Si l'apprentissage est plus rapide avec un reward élévé stable plus rapidement, l'instabilité demeure avec d'importantes variations du reward qui correspondent à des états nouveaux atteints avec l'aléatoire de la politique epsilon greedy.
+
+Une amélioration possible consiste à appliquer le **Prioritized Experience Replay**.
 
 
 # Sources
