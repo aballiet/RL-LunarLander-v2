@@ -10,9 +10,9 @@ L'agent est plongé au sein d'un *environnement*, et prend ses décisions en fon
 
 Le but de ce projet est de faire atterrir une fusée sur la lune en contrôlant ses moteurs.
 
-
-
-<img src="./ressources/interface.png" alt="lunar_environnement" style="width:50%; align-items :center;" />
+<p style = text-align:center;>
+    <img  src="./ressources/landing.gif"  alt="lunar_environnement" width="300">
+</p>
 
 L'environnement est donné par [gym](https://gym.openai.com/) avec [LunarLander-v2](https://gym.openai.com/envs/LunarLander-v2/) et intègre déjà le système de récompense (rewards) de nos actions.
 
@@ -124,11 +124,15 @@ max_pred_q_values = np.amax(pred_q_values, axis=1)
 
 2. La nouvelle target est calculée à partir de l'équation d'optimalité de Bellman  :
 
-   <img src="./ressources/bellman.png" alt="Bellman_optimality_equation" style="width:70%;" />
+<p style = text-align:center;>
+   <img src="./ressources/bellman.png" alt="Bellman_optimality_equation" width=300 />
+</p>
 
    On obtient par la suite
 
-<img src="./ressources/formula.png" alt="formula" style="width:50%;" />
+<p style = text-align:center;>
+   <img src="./ressources/formula.png" alt="formula" width=300 />
+</p>
 
 ```python
 targets = rewards + self.gamma * (max_pred_q_values) * (1 - end_boolean)
